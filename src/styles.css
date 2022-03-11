@@ -1,0 +1,19 @@
+body {
+  background: orange;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  margin-left: 25%;
+}
+
+.container img,
+.container canvas {
+  height: 30vh;
+  width: 50vw;
+}
+
+canvas {
+  margin-top: 10px;
+}
