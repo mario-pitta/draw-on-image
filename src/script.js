@@ -3,11 +3,16 @@ var ctx;
 var img = document.getElementById('img');
 var canvas = document.getElementById('canvas');
 canvas.style.border = '1px solid ';
+var isDrawing = false;
 var imgW = img.style.width;
 var imgH = img.style.height;
 var coords = { x: '', y: '' };
 inputFile = document.getElementById('inputFile');
-
+var sizes = getSizes();
+window.addEventListener('resize', (e) => {
+  sizes = getSizes();
+  console.log('resize')
+});
 function changeFile(e) {
   if (e) {
     let files = e.target.files;
@@ -28,13 +33,16 @@ function changeFile(e) {
 
 function createListeners() {
   canvas.addEventListener('mousedown', (event) => {
+    console.log(event);
+    isDrawing = true;
     desenharNoCanva(event);
   });
   canvas.addEventListener('mousemove', (event) => {
-    getPosition(event);
+    // getPosition(event);
     desenharNoCanva(event);
   });
   canvas.addEventListener('mouseup', (event) => {
+    isDrawing = false;
     getPosition(event);
   });
   canvas.addEventListener('mouseout', (event) => {
@@ -44,9 +52,8 @@ function createListeners() {
 
 function getSizes() {
   var body = document.getElementsByTagName('body').item(0);
-  // console.log(body);
   var main = document.getElementsByClassName('main').item(0);
-  var title = document.getElementsByClassName('title').item(0);
+  var h2 = document.getElementsByTagName('h2').item(0);
   var inputDiv = document.getElementsByClassName('inputDiv').item(0);
   var container = document.getElementsByClassName('container').item(0);
 
@@ -54,38 +61,38 @@ function getSizes() {
   let mainSizes = { x: main.clientWidth, y: main.clientHeight };
   let inputDivSizes = { x: inputDiv.clientWidth, y: inputDiv.clientHeight };
   let containerSizes = { x: container.clientWidth, y: container.clientHeight };
-  let titleSizes = { x: title.clientWidth, y: title.clientHeight };
+  let h2Sizes = { x: h2.clientWidth, y: h2.clientHeight };
 
   return (sizes = {
     bodySizes,
     mainSizes,
     inputDivSizes,
     containerSizes,
-    titleSizes,
+    h2Sizes,
   });
 }
 
 function getPosition(e) {
-  sizes = getSizes();
-  console.log(sizes)
-  sumHeigths = sizes.inputDivSizes.y;
+  sumHeigths = sizes.inputDivSizes.y - sizes.h2Sizes.y;
 
   coords.x = e.clientX - canvas.offsetLeft;
-  coords.y = e.clientY - sizes.inputDivSizes.y;
+  coords.y = e.clientY - canvas.offsetTop - sumHeigths;
 }
 
 function desenharNoCanva(e) {
-  getPosition(e);
-  ctx.beginPath();
-  ctx.moveTo(coords.x, coords.y);
-  ctx.lineTo(coords.x, coords.y);
-  ctx.fillRect(coords.x, coords.y, 2, 2);
-  ctx.lineWidth = 1;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = '#333';
-  ctx.stroke();
-  ctx.closePath();
-  // salvarImage();
+  if (isDrawing) {
+    getPosition(e);
+    ctx.beginPath();
+    ctx.moveTo(coords.x, coords.y);
+    ctx.lineTo(coords.x, coords.y);
+    ctx.fillRect(coords.x, coords.y, 2, 2);
+    ctx.lineWidth = 1;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#333';
+    ctx.stroke();
+    ctx.closePath();
+    // salvarImage();
+  }
 }
 
 function salvarImage() {
